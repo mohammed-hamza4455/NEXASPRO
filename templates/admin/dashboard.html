@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Admin Dashboard - NEXAS{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="h3 mb-4">
+                <i class="bi bi-speedometer2"></i> Admin Dashboard
+                <span class="badge bg-primary ms-2">{{ user.get_role_display }}</span>
+            </h1>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">Total Users</div>
+                            <div class="h5 mb-0 font-weight-bold">{{ total_users }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-people fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" href="{% url 'accounts:user_list' %}">View Details</a>
+                    <div class="small text-white"><i class="bi bi-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">Active Users</div>
+                            <div class="h5 mb-0 font-weight-bold">{{ active_users }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-person-check fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" href="{% url 'accounts:user_list' %}?active=true">View Details</a>
+                    <div class="small text-white"><i class="bi bi-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">Inactive Users</div>
+                            <div class="h5 mb-0 font-weight-bold">{{ inactive_users }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-person-x fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" href="{% url 'accounts:user_list' %}?active=false">View Details</a>
+                    <div class="small text-white"><i class="bi bi-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card bg-info text-white mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="text-xs font-weight-bold text-uppercase mb-1">New Users Today</div>
+                            <div class="h5 mb-0 font-weight-bold">{{ new_users_today }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-person-plus fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link" href="{% url 'accounts:user_create' %}">Add New User</a>
+                    <div class="small text-white"><i class="bi bi-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- User Role Distribution -->
+        <div class="col-xl-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="bi bi-pie-chart-fill me-1"></i>
+                    User Role Distribution
+                </div>
+                <div class="card-body">
+                    <canvas id="roleChart" width="100%" height="40"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activities -->
+        <div class="col-xl-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="bi bi-activity me-1"></i>
+                    Recent Activities
+                </div>
+                <div class="card-body">
+                    {% if recent_activities %}
+                    <div class="list-group list-group-flush">
+                        {% for activity in recent_activities %}
+                        <div class="list-group-item d-flex justify-content-between align-items-start">
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">{{ activity.action|title }} {{ activity.model_name }}</div>
+                                <small class="text-muted">
+                                    {% if activity.user %}{{ activity.user.get_full_name }}{% else %}System{% endif %} - 
+                                    {{ activity.timestamp|timesince }} ago
+                                </small>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">{{ activity.action }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No recent activities.</p>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'admin_dashboard:audit_logs' %}" class="btn btn-sm btn-outline-primary">
+                        View All Activities
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    {% if recent_notifications %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-bell me-1"></i>
+                    Recent Notifications
+                    <span class="badge bg-danger ms-2">{{ recent_notifications|length }}</span>
+                </div>
+                <div class="card-body">
+                    {% for notification in recent_notifications %}
+                    <div class="alert alert-{% if notification.priority == 'urgent' %}danger{% elif notification.priority == 'high' %}warning{% else %}info{% endif %} alert-dismissible fade show" role="alert">
+                        <strong>{{ notification.title }}</strong> - {{ notification.message }}
+                        <small class="text-muted d-block">{{ notification.created_at|timesince }} ago</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Quick Actions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-lightning me-1"></i>
+                    Quick Actions
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'accounts:user_create' %}" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-person-plus"></i><br>
+                                Add New User
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'admin_dashboard:settings' %}" class="btn btn-outline-secondary w-100">
+                                <i class="bi bi-gear"></i><br>
+                                System Settings
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'admin_dashboard:analytics' %}" class="btn btn-outline-info w-100">
+                                <i class="bi bi-graph-up"></i><br>
+                                Analytics
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{% url 'admin_dashboard:audit_logs' %}" class="btn btn-outline-warning w-100">
+                                <i class="bi bi-file-text"></i><br>
+                                Audit Logs
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Role Distribution Chart
+    const ctx = document.getElementById('roleChart').getContext('2d');
+    const roleData = {{ role_distribution|safe }};
+    
+    const labels = roleData.map(item => item.role.charAt(0).toUpperCase() + item.role.slice(1));
+    const data = roleData.map(item => item.count);
+    
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: [
+                    '#FF6384',
+                    '#36A2EB',
+                    '#FFCE56',
+                    '#4BC0C0'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    // Auto-refresh dashboard stats every 30 seconds
+    setInterval(function() {
+        fetch('{% url "admin_dashboard:api_stats" %}')
+            .then(response => response.json())
+            .then(data => {
+                // Update stats if needed
+                console.log('Dashboard updated:', data);
+            });
+    }, 30000);
+</script>
+{% endblock %}

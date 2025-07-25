@@ -1,0 +1,893 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Donator Dashboard | NEXAS NGO</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2c6e49;
+      --primary-dark: #24573a;
+      --primary-light: #e8f5e9;
+      --secondary: #4c956c;
+      --accent: #f9c74f;
+      --dark: #2d3436;
+      --light: #f8f9fa;
+      --gray: #636e72;
+      --light-gray: #dfe6e9;
+      --success: #2ecc71;
+      --warning: #f39c12;
+      --danger: #e74c3c;
+      --border-radius: 12px;
+      --box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s ease;
+      --sidebar-width: 260px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f8f9fa;
+      color: var(--dark);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Sidebar Styles */
+    #sidebar-wrapper {
+      width: var(--sidebar-width);
+      background: var(--dark);
+      color: white;
+      height: 100vh;
+      position: fixed;
+      transition: var(--transition);
+      z-index: 1000;
+      overflow-y: auto;
+      box-shadow: 2px 0 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .sidebar-heading {
+      padding: 24px 20px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nexas-brand-text {
+      color: var(--accent);
+    }
+
+    .logo-icon {
+      background: var(--accent);
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--dark);
+      font-weight: 700;
+    }
+
+    .list-group {
+      list-style: none;
+      padding: 20px 0;
+    }
+
+    .list-group-item {
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: var(--transition);
+      border-left: 4px solid transparent;
+      font-size: 1rem;
+    }
+
+    .list-group-item i {
+      width: 24px;
+      margin-right: 16px;
+      text-align: center;
+      color: var(--accent);
+      font-size: 1.1rem;
+    }
+
+    .list-group-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-left-color: var(--accent);
+    }
+
+    .list-group-item.active {
+      background: rgba(76, 149, 108, 0.15);
+      border-left-color: var(--accent);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .list-group-item.active i {
+      color: var(--accent);
+    }
+
+    /* Main Content Styles */
+    #page-content-wrapper {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      min-height: 100vh;
+      transition: var(--transition);
+    }
+
+    .navbar {
+      background: white;
+      padding: 18px 32px;
+      box-shadow: var(--box-shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar .fs-2 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .user-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--dark);
+      font-weight: 700;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .user-avatar:hover {
+      transform: scale(1.05);
+    }
+
+    .container-fluid {
+      padding: 32px;
+    }
+
+    /* Stats Cards */
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 30px;
+      transition: var(--transition);
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      border-top: 4px solid var(--primary);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-card-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 2rem;
+      background: var(--primary-light);
+      color: var(--primary);
+      transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover .stat-card-icon {
+      transform: scale(1.1);
+    }
+
+    .stat-card h3 {
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+      color: var(--dark);
+      font-weight: 700;
+    }
+
+    .stat-card p {
+      color: var(--gray);
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    /* Tables and Containers */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .table-container {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 28px;
+      height: 100%;
+    }
+
+    .table-container h3 {
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--primary-light);
+      color: var(--dark);
+      font-size: 1.5rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .table-container h3 i {
+      color: var(--primary);
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table th {
+      text-align: left;
+      padding: 14px 16px;
+      border-bottom: 2px solid var(--primary-light);
+      color: var(--gray);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--light-gray);
+      color: var(--dark);
+      font-size: 0.95rem;
+    }
+
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .badge {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .badge-active {
+      background: rgba(46, 204, 113, 0.15);
+      color: var(--success);
+    }
+
+    .badge-pending {
+      background: rgba(243, 156, 18, 0.15);
+      color: var(--warning);
+    }
+
+    /* Section Styles */
+    .content-section {
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    .section-title {
+      font-size: 1.9rem;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--primary-light);
+      color: var(--dark);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title i {
+      color: var(--primary);
+      font-size: 1.6rem;
+    }
+
+    /* Payment Form */
+    .payment-form {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 32px;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid var(--light-gray);
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(44, 110, 73, 0.1);
+    }
+
+    .form-row {
+      display: flex;
+      gap: 20px;
+    }
+
+    .form-row .form-group {
+      flex: 1;
+    }
+
+    .card-icons {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .card-icon {
+      width: 50px;
+      height: 30px;
+      background: var(--light-gray);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--gray);
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 14px 28px;
+      border-radius: var(--border-radius);
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(44, 110, 73, 0.2);
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      color: var(--dark);
+    }
+
+    .btn-accent:hover {
+      background: #f8b836;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(249, 199, 79, 0.2);
+    }
+
+    /* Impact Card */
+    .impact-card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 32px;
+      margin-top: 24px;
+      position: relative;
+      border-left: 4px solid var(--accent);
+    }
+
+    .impact-card h5 {
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+      color: var(--dark);
+    }
+
+    .impact-card p {
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+    }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: var(--success);
+      color: white;
+      padding: 15px 25px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      z-index: 1000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.4s ease;
+    }
+    
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .toast i {
+      font-size: 1.5rem;
+    }
+    
+    .toast-content {
+      flex: 1;
+    }
+    
+    .toast-title {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .toast-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 5px;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      :root {
+        --sidebar-width: 80px;
+      }
+      
+      .sidebar-heading span {
+        display: none;
+      }
+      
+      .list-group-item span {
+        display: none;
+      }
+      
+      .list-group-item i {
+        margin-right: 0;
+        font-size: 1.3rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar .fs-2 {
+        font-size: 1.4rem;
+      }
+      
+      .container-fluid {
+        padding: 20px;
+      }
+      
+      .form-row {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .navbar {
+        padding: 12px 20px;
+      }
+      
+      .stat-card {
+        padding: 20px;
+      }
+      
+      .stat-card-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.6rem;
+      }
+      
+      .stat-card h3 {
+        font-size: 2.2rem;
+      }
+      
+      .table-container {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="wrapper">
+  <!-- Sidebar -->
+  <div id="sidebar-wrapper">
+    <div class="sidebar-heading">
+      <div class="logo-icon">N</div>
+      <span class="nexas-brand-text">NEXAS</span> Donator
+    </div>
+    <ul class="list-group">
+      <li class="list-group-item active" data-target="dashboard-section"><i class="fa fa-home"></i> <span>Dashboard</span></li>
+      <li class="list-group-item" data-target="history-section"><i class="fa fa-history"></i> <span>Donation History</span></li>
+      <li class="list-group-item" data-target="donate-section"><i class="fa fa-hand-holding-heart"></i> <span>Donate Now</span></li>
+      <li class="list-group-item" id="logout-btn"><i class="fa fa-sign-out-alt"></i> <span>Logout</span></li>
+    </ul>
+  </div>
+  
+  <!-- Page Content -->
+  <div id="page-content-wrapper">
+    <nav class="navbar" style="width: 1300px;">
+      <span class="fs-2">Donator Dashboard</span>
+      <div class="user-menu">
+        <div class="user-avatar" title="Your Profile">
+          <i class="fas fa-user"></i>
+        </div>
+      </div>
+    </nav>
+    
+    <div class="container-fluid p-4">
+      <!-- Dashboard Section (default) -->
+      <div id="dashboard-section" class="content-section active">
+        <h2 class="section-title"><i class="fas fa-tachometer-alt"></i> Dashboard Overview</h2>
+        
+        <div class="stats-container">
+          <div class="stat-card">
+            <div class="stat-card-icon"><i class="fa fa-rupee-sign"></i></div>
+            <h3>₹ {{ stats.total_donated|floatformat:0 }}</h3>
+            <p>Total Donated</p>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-card-icon"><i class="fa fa-hand-holding-heart"></i></div>
+            <h3>{{ stats.donation_count }}</h3>
+            <p>Donations</p>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-card-icon"><i class="fa fa-trophy"></i></div>
+            <h3>{{ stats.campaigns_supported }}</h3>
+            <p>Campaigns Supported</p>
+          </div>
+        </div>
+        
+        <div class="dashboard-grid">
+          <div class="table-container">
+            <h3><i class="fas fa-history"></i> Recent Donations</h3>
+            <table class="table">
+              <thead>
+                <tr><th>Date</th><th>Amount</th><th>Campaign</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                {% for donation in recent_donations %}
+                <tr>
+                  <td>{{ donation.created_at|date:"d M, Y" }}</td>
+                  <td>₹ {{ donation.amount|floatformat:0 }}</td>
+                  <td>{{ donation.campaign.name }}</td>
+                  <td><span class="badge badge-active">Complete</span></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4">No donations yet</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="impact-card">
+            <h5><i class="fas fa-chart-line"></i> Your Impact</h5>
+            <p>Your generous donations have made a real difference in communities. Thank you for supporting our causes and helping us create positive change.</p>
+            <button class="btn btn-accent"><i class="fas fa-download"></i> Download Impact Report</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Donation History Section -->
+      <div id="history-section" class="content-section">
+        <h2 class="section-title"><i class="fas fa-history"></i> Donation History</h2>
+        
+        <div class="table-container">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Transaction ID</th>
+                  <th>Amount</th>
+                  <th>Campaign</th>
+                  <th>Payment Method</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for donation in all_donations %}
+                <tr>
+                  <td>{{ donation.created_at|date:"d M, Y" }}</td>
+                  <td>{{ donation.transaction_id|default:"N/A" }}</td>
+                  <td>₹ {{ donation.amount|floatformat:0 }}</td>
+                  <td>{{ donation.campaign.name }}</td>
+                  <td>{{ donation.payment_method|default:"Online" }}</td>
+                  <td><span class="badge badge-active">Complete</span></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6">No donations yet</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <div class="impact-card">
+          <h5><i class="fas fa-file-invoice-dollar"></i> Tax Documents</h5>
+          <p>Download your donation receipts for tax purposes. All donations to NEXAS NGO are tax-deductible as allowed by law.</p>
+          <button class="btn btn-accent"><i class="fas fa-download"></i> Download Tax Receipts</button>
+        </div>
+      </div>
+      
+      <!-- Donate Now Section -->
+      <div id="donate-section" class="content-section">
+        <h2 class="section-title"><i class="fas fa-hand-holding-heart"></i> Make a Donation</h2>
+        
+        <form id="donation-form" class="payment-form" method="post" action="{% url 'donation_dashboard:make_donation' %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="campaign">Support a Campaign (Optional)</label>
+            <select id="campaign" name="campaign" class="form-control">
+              <option value="">General Fund (No specific campaign)</option>
+              {% for campaign in active_campaigns %}
+              <option value="{{ campaign.id }}">{{ campaign.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="amount">Donation Amount (₹)</label>
+            <input type="number" id="amount" name="amount" class="form-control" placeholder="Enter amount" min="100" value="1000" required>
+          </div>
+          
+          <div class="form-group">
+            <label>Payment Method</label>
+            <div class="card-icons">
+              <div class="card-icon"><i class="fab fa-cc-visa"></i></div>
+              <div class="card-icon"><i class="fab fa-cc-mastercard"></i></div>
+              <div class="card-icon"><i class="fab fa-cc-amex"></i></div>
+              <div class="card-icon"><i class="fab fa-cc-paypal"></i></div>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="card-number">Card Number</label>
+            <input type="text" id="card-number" name="card_number" class="form-control" placeholder="1234 5678 9012 3456">
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="expiry">Expiry Date</label>
+              <input type="text" id="expiry" name="expiry" class="form-control" placeholder="MM/YY">
+            </div>
+            
+            <div class="form-group">
+              <label for="cvv">CVV</label>
+              <input type="text" id="cvv" name="cvv" class="form-control" placeholder="123">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="name">Cardholder Name</label>
+            <input type="text" id="name" name="cardholder_name" class="form-control" placeholder="Full name as on card">
+          </div>
+          
+          <div class="form-group">
+            <label for="email">Email for Receipt</label>
+            <input type="email" id="email" name="email" class="form-control" placeholder="your@email.com" value="{{ user.email }}">
+          </div>
+          
+          <button type="submit" class="btn btn-primary" style="width:100%; padding:16px;">
+            <i class="fas fa-lock"></i> Donate Securely
+          </button>
+          
+          <div style="text-align:center; margin-top:20px; color:var(--gray);">
+            <i class="fas fa-shield-alt"></i> Your payment is secured with 256-bit SSL encryption
+          </div>
+        </form>
+        
+        <div class="impact-card" style="max-width:600px; margin:32px auto 0;">
+          <h5><i class="fas fa-info-circle"></i> About Your Donation</h5>
+          <p>NEXAS NGO ensures that 92% of every donation goes directly to program activities. Your contribution will be used to support the cause you select, making a tangible impact in communities around the world.</p>
+          <p>You'll receive a tax receipt immediately after your donation is processed.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast notification -->
+<div id="toast" class="toast">
+  <i class="fas fa-check-circle"></i>
+  <div class="toast-content">
+    <div class="toast-title">Donation Successful</div>
+    <div class="toast-message">Thank you for your generous contribution!</div>
+  </div>
+  <button class="toast-close">&times;</button>
+</div>
+
+<script>
+  // Handle sidebar navigation
+  document.querySelectorAll('.list-group-item').forEach(item => {
+    if (item.id !== 'logout-btn') {
+      item.addEventListener('click', function() {
+        // Remove active class from all items
+        document.querySelectorAll('.list-group-item').forEach(i => {
+          i.classList.remove('active');
+        });
+        
+        // Add active class to clicked item
+        this.classList.add('active');
+        
+        // Hide all content sections
+        document.querySelectorAll('.content-section').forEach(section => {
+          section.classList.remove('active');
+        });
+        
+        // Show the target section
+        const target = this.getAttribute('data-target');
+        document.getElementById(target).classList.add('active');
+        
+        // Scroll to top when switching sections
+        window.scrollTo(0, 0);
+      });
+    }
+  });
+
+  // Handle logout
+  document.getElementById('logout-btn').addEventListener('click', function() {
+    // Redirect to logout URL
+    window.location.href = "{% url 'accounts:logout' %}";
+  });
+
+  // Handle donation form submission
+  document.getElementById('donation-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Validate form
+    const amount = document.getElementById('amount').value;
+    
+    if (!amount || amount < 100) {
+      alert('Please enter a valid amount (minimum ₹100)');
+      return;
+    }
+    
+    // Submit the form via AJAX
+    const formData = new FormData(this);
+    
+    fetch(this.action, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        // Show success toast
+        showToast('Donation Successful', 'Thank you for your generous contribution!');
+        
+        // Reset form
+        this.reset();
+        
+        // Redirect to dashboard after 3 seconds
+        setTimeout(() => {
+          document.querySelector('.list-group-item[data-target="dashboard-section"]').click();
+          // Refresh the page to show updated stats
+          window.location.reload();
+        }, 3000);
+      } else {
+        alert('Error processing donation: ' + (data.error || 'Unknown error'));
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('Error processing donation. Please try again.');
+    });
+  });
+
+  // Toast notification functions
+  function showToast(title, message) {
+    const toast = document.getElementById('toast');
+    toast.querySelector('.toast-title').textContent = title;
+    toast.querySelector('.toast-message').textContent = message;
+    toast.classList.add('show');
+    
+    // Auto hide after 3 seconds
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000);
+  }
+
+  // Close toast on button click
+  document.querySelector('.toast-close').addEventListener('click', () => {
+    document.getElementById('toast').classList.remove('show');
+  });
+
+  // Show messages if any
+  {% if messages %}
+    {% for message in messages %}
+      showToast('{{ message.tags|title }}', '{{ message }}');
+    {% endfor %}
+  {% endif %}
+</script>
+</body>
+</html>

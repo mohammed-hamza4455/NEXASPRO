@@ -1,0 +1,688 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enhanced Team Cards - NEXAS-NGO</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'sunshine': '#FFD700',
+            'golden': '#FFC107',
+            'amber': '#FFB300',
+            'dark-gold': '#D4AF37',
+            'light-yellow': '#FFF9C4',
+            'dark-text': '#1E293B'
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .hero-gradient {
+      background: linear-gradient(120deg, #FFD700 0%, #FFB300 100%);
+    }
+    
+    .card-hover {
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      position: relative;
+      overflow: hidden;
+      border: 2px solid #FFC107;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.15);
+      border-color: #D4AF37;
+    }
+    
+    /* Golden shine effect */
+    .card-hover::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.6),
+        transparent
+      );
+      transition: 0.5s;
+      z-index: 1;
+    }
+    
+    .card-hover:hover::before {
+      left: 150%;
+    }
+    
+    /* Circle image animation */
+    .circle-img img {
+      transition: transform 0.4s ease, filter 0.4s ease;
+      display: inline-block;
+    }
+    
+    .card-hover:hover .circle-img img {
+      transform: scale(1.05);
+      filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.2));
+    }
+    
+    /* Social icon animation */
+    .social-link {
+      transition: all 0.3s ease;
+      transform: translateY(0);
+      opacity: 0.8;
+    }
+    
+    .card-hover:hover .social-link {
+      transform: translateY(-3px);
+      opacity: 1;
+      filter: drop-shadow(0 3px 5px rgba(212, 175, 55, 0.4));
+    }
+    
+    .card-hover:hover .social-link:nth-child(1) {
+      transition-delay: 0.1s;
+    }
+    
+    .card-hover:hover .social-link:nth-child(2) {
+      transition-delay: 0.2s;
+    }
+    
+    .card-hover:hover .social-link:nth-child(3) {
+      transition-delay: 0.3s;
+    }
+    
+    /* Name tag animation */
+    .team-name {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .team-name::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -3px;
+      left: 0;
+      background: linear-gradient(90deg, #D4AF37, #FFC107);
+      transition: width 0.4s ease;
+    }
+    
+    .card-hover:hover .team-name::after {
+      width: 100%;
+    }
+    
+    /* Role tag animation */
+    .team-role {
+      transition: all 0.3s ease;
+    }
+    
+    .card-hover:hover .team-role {
+      color: #B8860B;
+      transform: translateY(2px);
+    }
+    
+    /* Background pulse effect */
+    .card-hover::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at center, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: 0;
+    }
+    
+    .card-hover:hover::after {
+      opacity: 1;
+    }
+    
+    .team-img {
+      border: 3px solid #fff;
+      box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.15);
+    }
+    
+    .feature-icon {
+      background: linear-gradient(135deg, #FFC107 0%, #FFB300 100%);
+    }
+    
+    .wave-divider {
+      position: relative;
+      height: 80px;
+      overflow: hidden;
+    }
+    
+    .wave-divider svg {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .stat-card {
+      transition: all 0.3s ease;
+      border-left: 4px solid #FFC107;
+      background: rgba(255, 255, 255, 0.85);
+    }
+    
+    .stat-card:hover {
+      transform: scale(1.03);
+      background-color: #fff;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #FFC107 0%, #FFB300 100%);
+      transition: all 0.3s ease;
+      color: #1E293B;
+      font-weight: 600;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(255, 179, 0, 0.3);
+    }
+    
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.5); }
+      70% { box-shadow: 0 0 0 15px rgba(255, 193, 7, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
+    }
+    
+    .circle-img {
+      border-radius: 50%;
+      transition: all 0.4s ease;
+      border: 3px solid #fff;
+      box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-hover:hover .circle-img {
+      transform: scale(1.1);
+      box-shadow: 0 12px 25px -3px rgba(212, 175, 55, 0.3);
+    }
+    
+    .shine-effect {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .shine-effect:after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -60%;
+      width: 20%;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: rotate(25deg);
+      transition: all 0.8s;
+    }
+    
+    .shine-effect:hover:after {
+      left: 140%;
+    }
+    
+    .gold-border {
+      border: 2px solid #FFD700;
+    }
+    
+    .gold-text {
+      color: #D4AF37;
+      font-weight: 700;
+    }
+    
+    .content-container {
+      flex: 1;
+    }
+    
+    /* Blob animation */
+    @keyframes blob {
+      0% {
+        transform: translate(0px, 0px) scale(1);
+      }
+      33% {
+        transform: translate(30px, -50px) scale(1.1);
+      }
+      66% {
+        transform: translate(-20px, 20px) scale(0.9);
+      }
+      100% {
+        transform: translate(0px, 0px) scale(1);
+      }
+    }
+    
+    .animate-blob {
+      animation: blob 7s infinite;
+    }
+    
+    .animation-delay-2000 {
+      animation-delay: 2s;
+    }
+    
+    .animation-delay-4000 {
+      animation-delay: 4s;
+    }
+    
+    .team-img-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    
+    .team-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    /* Responsive Back to Login Button */
+    .responsive-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 32px;
+      font-size: 18px;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 9999px;
+      background: linear-gradient(135deg, #FFC107 0%, #FFB300 100%);
+      color: #1E293B;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(255, 193, 7, 0.2);
+    }
+
+    .responsive-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(255, 179, 0, 0.4);
+      color: #1E293B;
+      text-decoration: none;
+    }
+
+    /* Responsive breakpoints for button */
+    @media (max-width: 768px) {
+      .responsive-btn {
+        padding: 14px 28px;
+        font-size: 16px;
+        width: auto;
+        min-width: 200px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .responsive-btn {
+        padding: 12px 24px;
+        font-size: 14px;
+        width: 100%;
+        max-width: 280px;
+      }
+    }
+
+    @media (max-width: 320px) {
+      .responsive-btn {
+        padding: 10px 20px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body class="text-dark-text flex flex-col">
+  <!-- Hero Section -->
+  <div class="hero-gradient text-dark-text pt-16 pb-32 rounded-b-3xl relative overflow-hidden">
+    <div class="absolute inset-0">
+      <div class="absolute top-20 right-0 w-64 h-64 bg-amber-400 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-blob"></div>
+      <div class="absolute top-40 left-20 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-blob animation-delay-2000"></div>
+      <div class="absolute bottom-10 left-40 w-80 h-80 bg-golden rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-blob animation-delay-4000"></div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="text-center">
+        <div class="inline-flex items-center justify-center bg-white bg-opacity-90 px-6 py-3 rounded-full mb-6 shadow-md">
+          <span class="font-bold text-amber-600">NEXAS-NGO MANAGEMENT SYSTEM</span>
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Empowering Non-Profits with <span class="gold-text">Golden Solutions</span></h1>
+        <p class="text-xl max-w-3xl mx-auto opacity-90 font-medium">Streamline operations, maximize impact, and amplify your social mission</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Wave Divider -->
+  <div class="wave-divider">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="fill-current text-amber-100"></path>
+      <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="fill-current text-amber-100"></path>
+      <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="fill-current text-amber-50"></path>
+    </svg>
+  </div>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-48 mb-20 flex-grow">
+    <!-- Platform Overview -->
+    <div class="bg-white rounded-3xl shadow-xl p-8 mb-16 relative overflow-hidden gold-border">
+      <div class="absolute -top-20 -right-20 w-64 h-64 bg-amber-100 rounded-full mix-blend-multiply filter blur-2xl opacity-40"></div>
+      
+      <div class="text-center mb-12 relative z-10">
+        <h2 class="text-3xl font-bold mb-4">Revolutionizing <span class="gold-text">NGO Management</span></h2>
+        <div class="w-24 h-1.5 bg-amber-400 mx-auto rounded-full"></div>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div class="stat-card p-6 rounded-xl shadow-md">
+          <div class="text-4xl font-bold text-amber-600 mb-2 flex items-center justify-center">
+            360°
+            <span class="ml-2 text-2xl">🔥</span>
+          </div>
+          <h3 class="text-xl font-semibold mb-2 text-center">Comprehensive Solution</h3>
+          <p class="text-gray-700 text-center">All-in-one platform for all NGO operations</p>
+        </div>
+        
+        <div class="stat-card p-6 rounded-xl shadow-md">
+          <div class="text-4xl font-bold text-amber-600 mb-2 flex items-center justify-center">
+            99%
+            <span class="ml-2 text-2xl">⚡</span>
+          </div>
+          <h3 class="text-xl font-semibold mb-2 text-center">Efficiency Boost</h3>
+          <p class="text-gray-700 text-center">Streamlined processes saving time & resources</p>
+        </div>
+        
+        <div class="stat-card p-6 rounded-xl shadow-md">
+          <div class="text-4xl font-bold text-amber-600 mb-2 flex items-center justify-center">
+            100%
+            <span class="ml-2 text-2xl">🔍</span>
+          </div>
+          <h3 class="text-xl font-semibold mb-2 text-center">Transparency</h3>
+          <p class="text-gray-700 text-center">Full visibility into operations for stakeholders</p>
+        </div>
+      </div>
+      
+      <div class="bg-amber-50 rounded-2xl p-8 mb-10 relative overflow-hidden shine-effect">
+        <div class="absolute -top-10 -left-10 w-32 h-32 bg-amber-200 rounded-full mix-blend-multiply filter blur-xl opacity-30"></div>
+        
+        <h3 class="text-2xl font-semibold flex items-center gap-3 mb-4">
+          <span class="feature-icon w-12 h-12 rounded-full flex items-center justify-center text-white">
+            <i class="fas fa-lightbulb text-xl"></i>
+          </span>
+          <span class="gold-text">Platform Overview</span>
+        </h3>
+        <p class="text-lg leading-relaxed mb-6">
+          NEXAS is a comprehensive, all-in-one platform designed to streamline the operations of non-profit organizations. Built with scalability and impact in mind, NEXAS empowers NGOs to efficiently manage donations, volunteers, beneficiaries, fundraising campaigns, and internal operations — all from a centralized dashboard.
+        </p>
+        <p class="text-lg leading-relaxed">
+          From volunteer onboarding to campaign tracking, donor engagement to financial reporting, NEXAS ensures transparency, accountability, and seamless coordination across teams. Featuring role-based access control, smart automation (like receipt generation, alerts), and powerful analytics, NEXAS is the digital backbone for mission-driven organizations seeking to maximize their social impact with minimal friction.
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="bg-amber-50 p-6 rounded-2xl gold-border">
+          <h4 class="text-xl font-semibold mb-3 flex items-center gap-2">
+            <i class="fas fa-bullseye text-amber-600"></i>
+            <span class="gold-text">Our Mission</span>
+          </h4>
+          <p class="text-gray-700">
+            To empower non-profit organizations with technology that amplifies their impact, simplifies operations, and enhances transparency to help them focus on what matters most - making a difference.
+          </p>
+        </div>
+        
+        <div class="bg-amber-50 p-6 rounded-2xl gold-border">
+          <h4 class="text-xl font-semibold mb-3 flex items-center gap-2">
+            <i class="fas fa-eye text-amber-600"></i>
+            <span class="gold-text">Our Vision</span>
+          </h4>
+          <p class="text-gray-700">
+            To create a world where every NGO, regardless of size, has access to enterprise-grade management tools that enable them to maximize their social impact and operational efficiency.
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Team Section -->
+    <div class="bg-white rounded-3xl shadow-xl p-8 relative overflow-hidden gold-border">
+      <div class="absolute -bottom-20 -right-20 w-72 h-72 bg-amber-100 rounded-full mix-blend-multiply filter blur-2xl opacity-30"></div>
+      
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold mb-4">Our <span class="gold-text">Development Team</span></h2>
+        <p class="text-lg text-gray-700 max-w-2xl mx-auto">Passionate professionals dedicated to creating technology for social good</p>
+        <div class="w-24 h-1.5 bg-amber-400 mx-auto rounded-full mt-4"></div>
+      </div>
+      
+      <!-- Team grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        <!-- Team Leader -->
+        <div class="card-hover bg-amber-50 p-5 rounded-2xl text-center shadow-md">
+          <div class="relative mx-auto mb-4">
+            <div class="circle-img w-24 h-24 mx-auto bg-amber-200 flex items-center justify-center overflow-hidden">
+              <img src="{% static 'images/team/hamza.jpg' %}" alt="MOHAMMED HAMZA M" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/96x96/6b7280/ffffff?text=MH'" />
+            </div>
+            <span class="absolute bottom-0 right-0 bg-amber-500 text-white rounded-full w-8 h-8 flex items-center justify-center border-2 border-white">
+              <i class="fas fa-crown text-xs"></i>
+            </span>
+          </div>
+          <h3 class="text-xl font-bold team-name">MOHAMMED HAMZA M</h3>
+          <p class="text-amber-700 font-medium team-role">Team Leader</p>
+          <div class="flex justify-center mt-3 space-x-2">
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fab fa-github"></i>
+            </a>
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fas fa-envelope"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Developers -->
+        <div class="card-hover bg-amber-50 p-5 rounded-2xl text-center shadow-md">
+          <div class="circle-img w-20 h-20 mx-auto bg-amber-200 flex items-center justify-center overflow-hidden mb-4">
+            <img src="{% static 'images/team/sibhi.jpg' %}" alt="SIBHI RAAJ R" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/80x80/6b7280/ffffff?text=SR'" />
+          </div>
+          <h3 class="text-xl font-bold team-name">SIBHI RAAJ R</h3>
+          <p class="text-amber-700 font-medium team-role">UI/UX Designer</p>
+          <div class="flex justify-center mt-3 space-x-2">
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fab fa-github"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="card-hover bg-amber-50 p-5 rounded-2xl text-center shadow-md">
+          <div class="circle-img w-20 h-20 mx-auto bg-amber-200 flex items-center justify-center overflow-hidden mb-4">
+            <img src="{% static 'images/team/cheziyan.jpg' %}" alt="PORCHEZHIAN E" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/80x80/6b7280/ffffff?text=PE'" />
+          </div>
+          <h3 class="text-xl font-bold team-name">PORCHEZHIAN E</h3>
+          <p class="text-amber-700 font-medium team-role">Backend Developer</p>
+          <div class="flex justify-center mt-3 space-x-2">
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fab fa-github"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="card-hover bg-amber-50 p-5 rounded-2xl text-center shadow-md">
+          <div class="circle-img w-20 h-20 mx-auto bg-amber-200 flex items-center justify-center overflow-hidden mb-4">
+            <img src="{% static 'images/team/ragul.jpg' %}" alt="RAGUL K" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/80x80/6b7280/ffffff?text=RK'" />
+          </div>
+          <h3 class="text-xl font-bold team-name">RAGUL K</h3>
+          <p class="text-amber-700 font-medium team-role">Frontend Developer</p>
+          <div class="flex justify-center mt-3 space-x-2">
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fab fa-github"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="card-hover bg-amber-50 p-5 rounded-2xl text-center shadow-md">
+          <div class="circle-img w-20 h-20 mx-auto bg-amber-200 flex items-center justify-center overflow-hidden mb-4">
+            <img src="{% static 'images/team/raihan.png' %}" alt="RAIHAAN AHMED R" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/80x80/6b7280/ffffff?text=RA'" />
+          </div>
+          <h3 class="text-xl font-bold team-name">RAIHAAN AHMED R</h3>
+          <p class="text-amber-700 font-medium team-role">Backend Developer</p>
+          <div class="flex justify-center mt-3 space-x-2">
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fab fa-github"></i>
+            </a>
+          </div>
+        </div>
+        
+        <!-- Additional team members -->
+        <div class="card-hover bg-amber-50 p-5 rounded-2xl text-center shadow-md">
+          <div class="circle-img w-20 h-20 mx-auto bg-amber-200 flex items-center justify-center overflow-hidden mb-4">
+            <img src="{% static 'images/team/srinivasan.jpg' %}" alt="SRINIVASAN S" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/80x80/6b7280/ffffff?text=SS'" />
+          </div>
+          <h3 class="text-xl font-bold team-name">SRINIVASAN S</h3>
+          <p class="text-amber-700 font-medium team-role">Database Architect</p>
+          <div class="flex justify-center mt-3 space-x-2">
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fab fa-github"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="card-hover bg-amber-50 p-5 rounded-2xl text-center shadow-md">
+          <div class="circle-img w-20 h-20 mx-auto bg-amber-200 flex items-center justify-center overflow-hidden mb-4">
+            <img src="{% static 'images/team/vishal.jpg' %}" alt="VISHAL S" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/80x80/6b7280/ffffff?text=VS'" />
+          </div>
+          <h3 class="text-xl font-bold team-name">VISHAL S</h3>
+          <p class="text-amber-700 font-medium team-role">UI/UX Designer</p>
+          <div class="flex justify-center mt-3 space-x-2">
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fab fa-github"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="card-hover bg-amber-50 p-5 rounded-2xl text-center shadow-md">
+          <div class="circle-img w-20 h-20 mx-auto bg-amber-200 flex items-center justify-center overflow-hidden mb-4">
+            <img src="{% static 'images/team/ajay.jpg' %}" alt="AJAY J" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/80x80/6b7280/ffffff?text=AJ'" />
+          </div>
+          <h3 class="text-xl font-bold team-name">AJAY J</h3>
+          <p class="text-amber-700 font-medium team-role">DevOps Engineer</p>
+          <div class="flex justify-center mt-3 space-x-2">
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fab fa-github"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="card-hover bg-amber-50 p-5 rounded-2xl text-center shadow-md">
+          <div class="circle-img w-20 h-20 mx-auto bg-amber-200 flex items-center justify-center overflow-hidden mb-4">
+            <img src="{% static 'images/team/jeyaarikaran.jpg' %}" alt="JEYAARIKARAN P" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/80x80/6b7280/ffffff?text=JP'" />
+          </div>
+          <h3 class="text-xl font-bold team-name">JEYAARIKARAN P</h3>
+          <p class="text-amber-700 font-medium team-role">QA Engineer</p>
+          <div class="flex justify-center mt-3 space-x-2">
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fab fa-github"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="card-hover bg-amber-50 p-5 rounded-2xl text-center shadow-md">
+          <div class="circle-img w-20 h-20 mx-auto bg-amber-200 flex items-center justify-center overflow-hidden mb-4">
+            <img src="{% static 'images/team/esakkindhar.jpg' %}" alt="ESAKKINDHAR A" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/80x80/6b7280/ffffff?text=EA'" />
+          </div>
+          <h3 class="text-xl font-bold team-name">ESAKKINDHAR A</h3>
+          <p class="text-amber-700 font-medium team-role">Security Specialist</p>
+          <div class="flex justify-center mt-3 space-x-2">
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fab fa-linkedin-in"></i>
+            </a>
+            <a href="#" class="text-amber-600 social-link">
+              <i class="fab fa-github"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- CTA Section -->
+    <div class="mt-16 text-center mb-10">
+      <a href="{% url 'accounts:login' %}" class="responsive-btn pulse relative overflow-hidden shine-effect">
+        <span>Back to Login</span>
+        <i class="fas fa-arrow-right ml-3"></i>
+      </a>
+      <p class="mt-6 text-gray-700 font-medium">Ready to transform your NGO's operations?</p>
+    </div>
+  </div>
+  
+  <script>
+    // Add subtle animation to the blob elements
+    document.addEventListener('DOMContentLoaded', function() {
+      const blobs = document.querySelectorAll('.animate-blob');
+      
+      // Create an observer to restart animations when they become visible
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.animationPlayState = 'running';
+          } else {
+            entry.target.style.animationPlayState = 'paused';
+          }
+        });
+      }, {
+        threshold: 0.1
+      });
+      
+      blobs.forEach(blob => {
+        observer.observe(blob);
+      });
+    });
+  </script>
+</body>
+</html>

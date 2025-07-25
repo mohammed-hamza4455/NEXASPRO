@@ -1,0 +1,1006 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Volunteer Dashboard | NEXAS NGO</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    :root {
+      --primary: #FBBC05;
+      --primary-dark: #E6A800;
+      --primary-light: #FFF8E1;
+      --secondary: #34A853;
+      --dark: #202124;
+      --light: #f8f9fa;
+      --gray: #5f6368;
+      --light-gray: #dadce0;
+      --success: #34A853;
+      --warning: #FBBC05;
+      --danger: #EA4335;
+      --border-radius: 10px;
+      --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s ease;
+      --sidebar-width: 280px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+
+    body {
+      background-color: #f8f9fa;
+      color: var(--dark);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Sidebar Styles */
+    #sidebar-wrapper {
+      width: var(--sidebar-width);
+      background: var(--dark);
+      color: white;
+      height: 100vh;
+      position: fixed;
+      transition: var(--transition);
+      z-index: 1000;
+      overflow-y: auto;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar-heading {
+      padding: 24px 20px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nexas-brand-text {
+      color: var(--primary);
+    }
+
+    .logo-icon {
+      background: var(--primary);
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--dark);
+      font-weight: 700;
+    }
+
+    .list-group {
+      list-style: none;
+      padding: 20px 0;
+    }
+
+    .list-group-item {
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: var(--transition);
+      border-left: 4px solid transparent;
+      font-size: 1rem;
+    }
+
+    .list-group-item i {
+      width: 24px;
+      margin-right: 16px;
+      text-align: center;
+      color: var(--primary);
+      font-size: 1.1rem;
+    }
+
+    .list-group-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-left-color: var(--primary);
+    }
+
+    .list-group-item.active {
+      background: rgba(251, 188, 5, 0.15);
+      border-left-color: var(--primary);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .list-group-item.active i {
+      color: var(--primary);
+    }
+
+    /* Main Content Styles */
+    #page-content-wrapper {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      min-height: 100vh;
+      transition: var(--transition);
+    }
+
+    .navbar {
+      background: white;
+      padding: 18px 32px;
+      box-shadow: var(--box-shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding-left: 300px;
+    }
+
+    .navbar .fs-2 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .user-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--dark);
+      font-weight: 700;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .user-avatar:hover {
+      transform: scale(1.05);
+    }
+
+    .container-fluid {
+      padding: 32px;
+      padding-top: 100px;
+      width: 1500px;
+    }
+
+    /* Stats Cards */
+    .row.g-4 {
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 28px;
+      transition: var(--transition);
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      border-top: 4px solid var(--primary);
+      margin-top: 15px;
+      width: 350px;
+      margin-right: 15px;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .stat-card-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 1.8rem;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+    }
+
+    .stat-card h3 {
+      font-size: 2.4rem;
+      margin-bottom: 8px;
+      color: var(--dark);
+      text-align: center;
+    }
+
+    .stat-card p {
+      color: var(--gray);
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    /* Tables and Containers */
+    .table-container {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 28px;
+      height: 100%;
+      margin-top: 15px;
+    }
+
+    .table-container h3 {
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--primary-light);
+      color: var(--dark);
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table th {
+      text-align: left;
+      padding: 14px 16px;
+      border-bottom: 2px solid var(--primary-light);
+      color: var(--gray);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--light-gray);
+      color: var(--dark);
+      font-size: 0.95rem;
+    }
+
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .badge {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .badge-active {
+      background: rgba(52, 168, 83, 0.15);
+      color: var(--success);
+    }
+
+    .badge-pending {
+      background: rgba(251, 188, 5, 0.15);
+      color: var(--warning);
+    }
+
+    /* Section Styles */
+    .content-section {
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    .section-title {
+      font-size: 1.9rem;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--primary-light);
+      color: var(--dark);
+      font-weight: 700;
+    }
+
+    /* Task Cards */
+    .task-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 28px;
+    }
+
+    .task-card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 28px;
+      border-left: 4px solid var(--primary);
+      position: relative;
+      transition: var(--transition);
+    }
+
+    .task-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .task-card h4 {
+      font-size: 1.25rem;
+      margin-bottom: 12px;
+      color: var(--dark);
+      font-weight: 600;
+    }
+
+    .task-card p {
+      color: var(--gray);
+      margin-bottom: 18px;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .task-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.92rem;
+      color: var(--gray);
+    }
+
+    .task-status {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+
+    /* Event Cards */
+    .event-card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 32px;
+      margin-bottom: 24px;
+      position: relative;
+      border-top: 4px solid var(--primary);
+      transition: var(--transition);
+    }
+
+    .event-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .event-date {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: var(--primary);
+      color: var(--dark);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .event-card h4 {
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+      color: var(--dark);
+      max-width: 70%;
+    }
+
+    .event-card p {
+      color: var(--gray);
+      margin-bottom: 20px;
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+
+    .event-meta {
+      display: flex;
+      gap: 20px;
+      font-size: 0.95rem;
+      color: var(--gray);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: var(--border-radius);
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--dark);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Reports Section */
+    .report-card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 32px;
+      margin-bottom: 28px;
+      border-left: 4px solid var(--primary);
+      transition: var(--transition);
+    }
+
+    .report-card:hover {
+      transform: translateY(-3px);
+    }
+
+    .report-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .report-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--dark);
+    }
+
+    .report-date {
+      color: var(--gray);
+      font-size: 0.95rem;
+    }
+
+    .report-content {
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 20px;
+      font-size: 1.05rem;
+    }
+
+    .report-content ul {
+      padding-left: 24px;
+      margin: 15px 0;
+    }
+
+    .report-content li {
+      margin-bottom: 8px;
+    }
+
+    /* Resources Section */
+    .resource-card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 32px;
+      margin-bottom: 28px;
+      border-left: 4px solid var(--primary);
+      transition: var(--transition);
+    }
+
+    .resource-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .resource-card h4 {
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+      color: var(--dark);
+    }
+
+    .resource-meta {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 16px;
+      font-size: 0.95rem;
+      color: var(--gray);
+      flex-wrap: wrap;
+    }
+
+    .resource-card p {
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 20px;
+      font-size: 1.05rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+      :root {
+        --sidebar-width: 80px;
+      }
+      
+      .sidebar-heading span {
+        display: none;
+      }
+      
+      .list-group-item span {
+        display: none;
+      }
+      
+      .list-group-item i {
+        margin-right: 0;
+        font-size: 1.3rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .row.g-4 {
+        flex-direction: row;
+      }
+      
+      .col-md-6 {
+        width: 100%;
+      }
+      
+      .navbar .fs-2 {
+        font-size: 1.4rem;
+      }
+      
+      .task-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .event-meta {
+        flex-direction: column;
+        gap: 8px;
+      }
+    }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: var(--success);
+      color: white;
+      padding: 15px 25px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      z-index: 1000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.4s ease;
+    }
+    
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .toast i {
+      font-size: 1.5rem;
+    }
+    
+    .toast-content {
+      flex: 1;
+    }
+    
+    .toast-title {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .toast-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+<div id="wrapper">
+  <!-- Sidebar -->
+  <div id="sidebar-wrapper">
+    <div class="sidebar-heading">
+      <div class="logo-icon"><i class="fas fa-hands-helping"></i></div>
+      <span class="nexas-brand-text">NEXAS</span> Volunteer
+    </div>
+    <ul class="list-group">
+      <li class="list-group-item active" data-target="dashboard-section"><i class="fa fa-home"></i> <span>Dashboard</span></li>
+      <li class="list-group-item" data-target="resources-section"><i class="fa fa-book"></i> <span>Resources</span></li>
+      <li class="list-group-item" data-target="reports-section"><i class="fa fa-chart-bar"></i> <span>Reports</span></li>
+      <li class="list-group-item" id="logout-btn"><i class="fa fa-sign-out-alt"></i> <span>Logout</span></li>
+    </ul>
+  </div>
+  
+  <!-- Page Content -->
+  <div id="page-content-wrapper">
+    <nav class="navbar" style="
+      position:absolute;
+      right: 0;
+      left:0;
+      top:0;
+      ">
+      <span class="fs-2">Volunteer Dashboard</span>
+      <div class="user-menu">
+        <div class="user-avatar" title="Your Profile">
+          {{ user.first_name.0|default:"V" }}{{ user.last_name.0|default:"" }}
+        </div>
+      </div>
+    </nav>
+    
+    <div class="container-fluid p-4" style="width: 1300px;">
+      <!-- Dashboard Section (default) -->
+      <div id="dashboard-section" class="content-section active">
+        <div class="row g-4 mb-4"  style="
+      display: flex;
+      flex-direction: row;
+      ">
+          <div class="col-md-4">
+            <div class="stat-card">
+              <div class="stat-card-icon"><i class="fa fa-clock"></i></div>
+              <h3>{{ total_hours|default:"0" }}</h3>
+              <p>Total Volunteer Hours</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="stat-card">
+              <div class="stat-card-icon"><i class="fa fa-tasks"></i></div>
+              <h3>{{ in_progress_tasks|default:"0" }}</h3>
+              <p>Active Tasks</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="stat-card">
+              <div class="stat-card-icon"><i class="fa fa-calendar"></i></div>
+              <h3>{{ my_events.count|default:"0" }}</h3>
+              <p>Upcoming Events</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="table-container">
+              <h3>Upcoming Events</h3>
+              <table class="table">
+                <thead>
+                  <tr><th>Event</th><th>Date</th><th>Location</th></tr>
+                </thead>
+                <tbody>
+                  {% for event in upcoming_events %}
+                  <tr>
+                    <td>{{ event.title }}</td>
+                    <td>{{ event.start_date|date:"d M, Y" }}</td>
+                    <td>{{ event.location }}</td>
+                  </tr>
+                  {% empty %}
+                  <tr><td colspan="3">No upcoming events</td></tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="table-container">
+              <h3>Active Tasks</h3>
+              <table class="table">
+                <thead>
+                  <tr><th>Task</th><th>Status</th><th>Deadline</th></tr>
+                </thead>
+                <tbody>
+                  {% for task in recent_tasks %}
+                  <tr>
+                    <td>{{ task.title }}</td>
+                    <td>
+                      {% if task.status == 'in_progress' %}
+                        <span class="badge badge-active">Ongoing</span>
+                      {% elif task.status == 'pending' %}
+                        <span class="badge badge-pending">Pending</span>
+                      {% else %}
+                        <span class="badge badge-active">{{ task.get_status_display }}</span>
+                      {% endif %}
+                    </td>
+                    <td>{{ task.due_date|date:"d M"|default:"No deadline" }}</td>
+                  </tr>
+                  {% empty %}
+                  <tr><td colspan="3">No active tasks</td></tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tasks Section -->
+      <div id="tasks-section" class="content-section">
+        <h2 class="section-title">My Tasks</h2>
+        <div class="task-grid">
+          {% for task in recent_tasks %}
+          <div class="task-card">
+            <div class="task-status">
+              {% if task.status == 'in_progress' %}
+                <span class="badge badge-active">Ongoing</span>
+              {% elif task.status == 'pending' %}
+                <span class="badge badge-pending">Pending</span>
+              {% else %}
+                <span class="badge badge-active">{{ task.get_status_display }}</span>
+              {% endif %}
+            </div>
+            <h4>{{ task.title }}</h4>
+            <p>{{ task.description|truncatewords:20 }}</p>
+            <div class="task-meta">
+              <span><i class="fas fa-calendar"></i> Deadline: {{ task.due_date|date:"d M"|default:"No deadline" }}</span>
+              <span><i class="fas fa-clock"></i> Estimated: {{ task.estimated_hours|default:"N/A" }} hours</span>
+            </div>
+          </div>
+          {% empty %}
+          <p>No tasks assigned yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+      
+      <!-- Events Section -->
+      <div id="events-section" class="content-section">
+        <h2 class="section-title">NEXAS NGO Events</h2>
+        
+        {% for event in upcoming_events %}
+        <div class="event-card">
+          <div class="event-date">{{ event.start_date|date:"d M"|upper }}</div>
+          <h4>{{ event.title }}</h4>
+          <p>{{ event.description|truncatewords:40 }}</p>
+          <div class="event-meta">
+            <span><i class="fas fa-map-marker-alt"></i> {{ event.location }}</span>
+            <span><i class="fas fa-clock"></i> {{ event.start_date|date:"H:i" }} - {{ event.end_date|date:"H:i" }}</span>
+            <span><i class="fas fa-user-friends"></i> {{ event.volunteers_needed }} Volunteers Needed</span>
+          </div>
+          <button class="btn btn-primary" onclick="showRSVPForm('{{ event.id }}')">
+            <i class="fas fa-calendar-plus"></i> RSVP for this Event
+          </button>
+        </div>
+        {% empty %}
+        <p>No upcoming events available.</p>
+        {% endfor %}
+      </div>
+      
+      <!-- Reports Section -->
+      <div id="reports-section" class="content-section">
+        <h2 class="section-title">NEXAS NGO Reports</h2>
+        
+        <div class="report-card">
+          <div class="report-header">
+            <div class="report-title">Quarterly Impact Report - Q2 2025</div>
+            <div class="report-date">Published: 15 July, 2025</div>
+          </div>
+          <div class="report-content">
+            <p>This comprehensive report details NEXAS's activities and impact during the second quarter of 2025. Our organization successfully completed 3 major community development projects, distributed essential aid to 1,200 families, and trained 85 new volunteers across our various programs.</p>
+            <p><strong>Key Achievements:</strong></p>
+            <ul>
+              <li>Education program reached 450 children in underserved communities</li>
+              <li>Health camps provided free medical services to 1,800 beneficiaries</li>
+              <li>Environmental initiative planted 2,500 trees in urban areas</li>
+              <li>Food security program distributed 8,500 meals</li>
+              <li>Digital literacy workshops trained 120 senior citizens</li>
+            </ul>
+            <p>Financial efficiency remained strong with 86% of donations going directly to program activities. The report includes detailed financial statements, program metrics, and testimonials from community members.</p>
+          </div>
+          <button class="btn btn-primary download-btn" data-url="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" data-filename="NEXAS_Q2_2025_Report.pdf">
+            <i class="fas fa-download"></i> Download Full Report (PDF)
+          </button>
+        </div>
+        
+        <div class="report-card">
+          <div class="report-header">
+            <div class="report-title">Annual Financial Report 2024</div>
+            <div class="report-date">Published: 28 February, 2025</div>
+          </div>
+          <div class="report-content">
+            <p>This report provides a comprehensive financial overview of NEXAS NGO for the fiscal year 2024. It details income sources, expenditure breakdown, and the overall financial health of the organization.</p>
+            <p><strong>Financial Highlights:</strong></p>
+            <ul>
+              <li>Total revenue: ₹78,42,000</li>
+              <li>Program expenses: 82% of total expenditure</li>
+              <li>Administrative costs: 10% of total expenditure</li>
+              <li>Fundraising costs: 8% of total expenditure</li>
+              <li>Reserve fund increased by 15%</li>
+            </ul>
+            <p>The report demonstrates our commitment to financial transparency and responsible stewardship of donor funds. Independent auditors have verified all financial statements included in this report.</p>
+          </div>
+          <button class="btn btn-primary download-btn" data-url="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" data-filename="NEXAS_Financial_Report_2024.pdf">
+            <i class="fas fa-download"></i> Download Full Report (PDF)
+          </button>
+        </div>
+        
+        <div class="report-card">
+          <div class="report-header">
+            <div class="report-title">Community Impact Assessment 2024-2025</div>
+            <div class="report-date">Published: 10 June, 2025</div>
+          </div>
+          <div class="report-content">
+            <p>This detailed assessment measures the long-term impact of NEXAS programs across the communities we serve. The report includes both quantitative metrics and qualitative stories of transformation.</p>
+            <p><strong>Key Findings:</strong></p>
+            <ul>
+              <li>92% of scholarship students showed improved academic performance</li>
+              <li>78% of health camp patients received follow-up care recommendations</li>
+              <li>Community gardens produced 1.2 tons of fresh produce</li>
+              <li>Digital literacy participants reported 65% increase in digital confidence</li>
+              <li>85% of program beneficiaries reported improved quality of life</li>
+            </ul>
+            <p>The assessment employed mixed-methods research including surveys, focus groups, and field observations. Recommendations for program improvements are included in the final section.</p>
+          </div>
+          <button class="btn btn-primary download-btn" data-url="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" data-filename="NEXAS_Impact_Assessment_2025.pdf">
+            <i class="fas fa-download"></i> Download Full Report (PDF)
+          </button>
+        </div>
+      </div>
+      
+      <!-- Resources Section -->
+      <div id="resources-section" class="content-section">
+        <h2 class="section-title">Volunteer Resources</h2>
+        
+        <div class="resource-card">
+          <h4>Volunteer Handbook</h4>
+          <div class="resource-meta">
+            <span><i class="fas fa-file-pdf"></i> PDF Document</span>
+            <span><i class="fas fa-download"></i> 2.4 MB</span>
+            <span><i class="fas fa-clock"></i> Last Updated: 15 June, 2025</span>
+          </div>
+          <p>Complete guide to volunteering with NEXAS NGO, including policies, procedures, code of conduct, and best practices for all volunteer activities. This essential resource covers everything from safety protocols to communication guidelines.</p>
+          <button class="btn btn-primary download-btn" data-url="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" data-filename="NEXAS_Volunteer_Handbook.pdf">
+            <i class="fas fa-download"></i> Download Handbook
+          </button>
+        </div>
+        
+        <div class="resource-card">
+          <h4>Safety Protocols & Emergency Procedures</h4>
+          <div class="resource-meta">
+            <span><i class="fas fa-file-pdf"></i> PDF Document</span>
+            <span><i class="fas fa-download"></i> 1.1 MB</span>
+            <span><i class="fas fa-clock"></i> Last Updated: 5 May, 2025</span>
+          </div>
+          <p>Comprehensive safety guidelines and emergency procedures for all volunteer activities, field work, and event participation. Includes protocols for medical emergencies, natural disasters, and conflict situations.</p>
+          <button class="btn btn-primary download-btn" data-url="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" data-filename="NEXAS_Safety_Protocols.pdf">
+            <i class="fas fa-download"></i> Download Safety Guide
+          </button>
+        </div>
+        
+        <div class="resource-card">
+          <h4>Fundraising Guide & Toolkit</h4>
+          <div class="resource-meta">
+            <span><i class="fas fa-file-pdf"></i> PDF Document</span>
+            <span><i class="fas fa-download"></i> 3.2 MB</span>
+            <span><i class="fas fa-clock"></i> Last Updated: 20 April, 2025</span>
+          </div>
+          <p>Effective strategies, templates, and resources for organizing successful fundraising campaigns for NEXAS initiatives. Includes sample outreach emails, social media templates, and event planning checklists.</p>
+          <button class="btn btn-primary download-btn" data-url="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" data-filename="NEXAS_Fundraising_Guide.pdf">
+            <i class="fas fa-download"></i> Download Fundraising Kit
+          </button>
+        </div>
+        
+        <div class="resource-card">
+          <h4>Community Engagement Toolkit</h4>
+          <div class="resource-meta">
+            <span><i class="fas fa-file-pdf"></i> PDF Document</span>
+            <span><i class="fas fa-download"></i> 4.7 MB</span>
+            <span><i class="fas fa-clock"></i> Last Updated: 8 March, 2025</span>
+          </div>
+          <p>Practical tools and techniques for effective community outreach and engagement in diverse environments. This comprehensive resource covers cultural sensitivity, communication strategies, and partnership development.</p>
+          <button class="btn btn-primary download-btn" data-url="https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" data-filename="NEXAS_Community_Engagement_Toolkit.pdf">
+            <i class="fas fa-download"></i> Download Toolkit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast notification -->
+<div id="toast" class="toast">
+  <i class="fas fa-check-circle"></i>
+  <div class="toast-content">
+    <div class="toast-title">Download Started</div>
+    <div class="toast-message">Your file is being downloaded</div>
+  </div>
+  <button class="toast-close">&times;</button>
+</div>
+
+<script>
+  // Handle sidebar navigation
+  document.querySelectorAll('.list-group-item').forEach(item => {
+    if (item.id !== 'logout-btn') {
+      item.addEventListener('click', function() {
+        // Remove active class from all items
+        document.querySelectorAll('.list-group-item').forEach(i => {
+          i.classList.remove('active');
+        });
+        
+        // Add active class to clicked item
+        this.classList.add('active');
+        
+        // Hide all content sections
+        document.querySelectorAll('.content-section').forEach(section => {
+          section.classList.remove('active');
+        });
+        
+        // Show the target section
+        const target = this.getAttribute('data-target');
+        document.getElementById(target).classList.add('active');
+      });
+    }
+  });
+
+  // Handle logout
+  document.getElementById('logout-btn').addEventListener('click', function() {
+    // Redirect to accounts logout URL
+    window.location.href = "{% url 'accounts:logout' %}";
+  });
+
+  // Download functionality with toast notification
+  document.querySelectorAll('.download-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const fileUrl = this.getAttribute('data-url');
+      const fileName = this.getAttribute('data-filename');
+      
+      // Create a temporary anchor element to trigger download
+      const downloadLink = document.createElement('a');
+      downloadLink.href = fileUrl;
+      downloadLink.download = fileName;
+      downloadLink.target = '_blank';
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      
+      // Show toast notification
+      showToast('Download Started', 'Your file is being downloaded');
+    });
+  });
+
+  // Toast notification functions
+  function showToast(title, message) {
+    const toast = document.getElementById('toast');
+    toast.querySelector('.toast-title').textContent = title;
+    toast.querySelector('.toast-message').textContent = message;
+    toast.classList.add('show');
+    
+    // Auto hide after 3 seconds
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000);
+  }
+
+  // Close toast on button click
+  document.querySelector('.toast-close').addEventListener('click', () => {
+    document.getElementById('toast').classList.remove('show');
+  });
+
+  // RSVP functionality placeholder
+  function showRSVPForm(eventId) {
+    // For now, show a simple alert
+    alert('RSVP functionality will redirect to event detail page. Event ID: ' + eventId);
+    // In a real implementation, this would redirect to the event detail page
+    // window.location.href = `/volunteer/events/${eventId}/`;
+  }
+</script>
+</body>
+</html>
