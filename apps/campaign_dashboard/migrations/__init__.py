@@ -1,0 +1,3 @@
+"""
+Campaign Dashboard app migrations.
+"""
